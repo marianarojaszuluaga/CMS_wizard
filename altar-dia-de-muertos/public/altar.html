@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Altar de Día de Muertos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Nunito:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #160c07; --wall: #2b1a10; --ink: #fbeedd; --muted: #d8bc9c;
+    --cempasuchil: #f28c1b; --oro: #e9b44c; --madera: #5a3520; --madera-osc: #3a2113;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Nunito', system-ui, sans-serif; cursor: none;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 45%, rgba(242,140,27,.22), transparent 70%),
+      radial-gradient(ellipse 120% 70% at 50% 110%, rgba(242,140,27,.28), transparent 60%),
+      linear-gradient(#24150c, var(--bg));
+  }
+
+  /* --- Papel picado --- */
+  .picado { position: absolute; top: 0; left: 0; right: 0; height: 15vh; display: flex; gap: .6vw; padding: 0 1vw; z-index: 3; }
+  .picado::before { content: ''; position: absolute; top: .4vh; left: 0; right: 0; height: 2px; background: rgba(251,238,221,.35); }
+  .picado svg { flex: 1; height: 100%; filter: drop-shadow(0 .6vh .8vh rgba(0,0,0,.4)); transform-origin: top center; animation: sway 6s ease-in-out infinite; }
+  .picado svg:nth-child(2n) { animation-delay: -2s; animation-duration: 7s; }
+  .picado svg:nth-child(3n) { animation-delay: -4s; }
+  @keyframes sway { 50% { transform: rotate(1.2deg) skewX(1deg); } }
+
+  /* --- Escena --- */
+  .scene { position: absolute; inset: 15vh 0 0 0; display: grid; grid-template-columns: 15vw 1fr 15vw; }
+  h1 {
+    position: absolute; top: 16vh; left: 0; right: 0; margin: 0; text-align: center; z-index: 2;
+    font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 4.2vh; letter-spacing: .04em;
+    text-shadow: 0 0 2vh rgba(242,140,27,.6);
+  }
+  h1 em { color: var(--oro); font-style: italic; font-weight: 500; }
+
+  .flores { position: relative; }
+  .flor {
+    position: absolute; border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, #b84f00 0 12%, transparent 13%),
+      repeating-conic-gradient(from 0deg, #f7a227 0 8deg, #e07a10 8deg 16deg);
+    box-shadow: inset 0 0 1.2vh rgba(120,40,0,.6), 0 0 2vh rgba(242,140,27,.35);
+  }
+  .flor::after { content: ''; position: absolute; inset: 18%; border-radius: 50%;
+    background: repeating-conic-gradient(from 5deg, #ffb53d 0 10deg, #e88515 10deg 20deg); opacity: .85; }
+
+  /* --- Fotos --- */
+  .altar { position: relative; display: flex; flex-direction: column; padding: 8vh 1vw 16vh; min-width: 0; }
+  .grid { --rows: 1; --cols: 1; --gap: 2.4vh; flex: 1; display: flex; flex-wrap: wrap; gap: var(--gap); justify-content: center; align-content: center; min-height: 0; transition: opacity .8s; }
+  .grid.fade { opacity: 0; }
+  .marco {
+    position: relative; height: calc((100% - (var(--rows) - 1) * var(--gap)) / var(--rows)); max-width: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); aspect-ratio: 4 / 5.2; display: flex; flex-direction: column;
+    padding: 1.1vh; border-radius: .6vh;
+    background: linear-gradient(135deg, #7a4a2a, var(--madera) 40%, var(--madera-osc));
+    box-shadow: 0 1.4vh 3vh rgba(0,0,0,.6), inset 0 0 0 .35vh var(--oro), inset 0 0 0 .7vh var(--madera-osc);
+    animation: llega 1s ease-out both;
+  }
+  .marco .foto { flex: 1; min-height: 0; border-radius: .3vh; overflow: hidden; background: #000; box-shadow: inset 0 0 1vh #000; }
+  .marco img { width: 100%; height: 100%; object-fit: cover; display: block; filter: sepia(.12) saturate(.95); }
+  .marco .placa { padding: .8vh .3vw .2vh; text-align: center; line-height: 1.15; }
+  .marco .nombre { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 2.3vh; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .marco .mensaje { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.6vh; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes llega { from { opacity: 0; transform: translateY(2vh) scale(.96); } }
+
+  .pagina { position: absolute; bottom: 13.5vh; left: 0; right: 0; text-align: center; color: var(--muted); font-size: 1.6vh; letter-spacing: .3em; }
+
+  /* --- Velas --- */
+  .velas { position: absolute; bottom: 0; left: 0; right: 0; height: 13vh; display: flex; justify-content: space-around; align-items: flex-end; padding: 0 18vw; z-index: 2; pointer-events: none; }
+  .vela { position: relative; width: 2.6vh; background: linear-gradient(90deg, #e9dcc6, #fff7ea 45%, #d9c8ad); border-radius: .4vh .4vh 0 0; }
+  .vela::before { /* llama */
+    content: ''; position: absolute; left: 50%; bottom: 100%; width: 1.3vh; height: 3vh; margin-left: -.65vh;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: radial-gradient(ellipse at 50% 75%, #fff 0 20%, #ffd36b 40%, #f28c1b 70%, transparent 72%);
+    animation: flicker 1.6s ease-in-out var(--d, 0s) infinite alternate; transform-origin: bottom center;
+  }
+  .vela::after { /* halo */
+    content: ''; position: absolute; left: 50%; bottom: 100%; width: 14vh; height: 14vh; margin: 0 0 -5vh -7vh; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,190,90,.28), transparent 65%); animation: glow 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes flicker { 30% { transform: scaleY(1.08) skewX(-3deg); } 60% { transform: scaleY(.94) skewX(2deg); } 100% { transform: scaleY(1.04) skewX(-1deg); } }
+  @keyframes glow { to { opacity: .65; transform: scale(.92); } }
+
+  /* --- QR --- */
+  .qr {
+    position: absolute; right: 2vw; bottom: 3vh; z-index: 4; width: 18vh; padding: 1.2vh; text-align: center;
+    background: #fbeedd; color: #2b1a10; border-radius: 1.4vh; box-shadow: 0 1vh 3vh rgba(0,0,0,.5);
+  }
+  .qr img { width: 100%; display: block; }
+  .qr p { margin: .6vh 0 0; font-size: 1.45vh; font-weight: 700; line-height: 1.2; }
+
+  /* --- Vacío --- */
+  .vacio { margin: auto; text-align: center; display: grid; justify-items: center; gap: 2vh; }
+  .vacio img { width: 34vh; background: #fbeedd; padding: 1.6vh; border-radius: 2vh; }
+  .vacio p { font-family: 'Cormorant Garamond', serif; font-size: 3.4vh; margin: 0; max-width: 40vw; }
+  body.empty .qr { display: none; }
+
+  /* --- Nueva ofrenda (destacado) --- */
+  .destacado {
+    position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; gap: 2vh;
+    background: radial-gradient(ellipse at center, rgba(40,20,8,.75), rgba(10,5,2,.94));
+    opacity: 0; pointer-events: none; transition: opacity .9s;
+  }
+  .destacado.show { opacity: 1; }
+  .destacado .contenido { display: grid; justify-items: center; gap: 2.4vh; }
+  .destacado .aviso { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 3.2vh; color: var(--oro); letter-spacing: .08em; }
+  .destacado .marco { height: 62vh; max-width: none; animation: none; }
+  .destacado.show .marco { animation: aparece 1.4s cubic-bezier(.2,.8,.2,1) both; }
+  .destacado .marco .nombre { font-size: 4vh; }
+  .destacado .marco .mensaje { font-size: 2.6vh; white-space: normal; }
+  @keyframes aparece { from { opacity: 0; transform: scale(.85); filter: blur(1vh); } }
+
+  /* --- Pétalos --- */
+  #petalos { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+
+  .offline { position: absolute; top: 1vh; right: 1vw; z-index: 20; font-size: 1.4vh; background: #8b1e1e; padding: .4vh .8vw; border-radius: 1vh; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="picado" id="picado" aria-hidden="true"></div>
+<h1>Altar de <em>nuestros</em> seres queridos</h1>
+
+<div class="scene">
+  <div class="flores" id="floresIzq"></div>
+  <div class="altar">
+    <div class="grid" id="grid"></div>
+    <div class="pagina" id="pagina"></div>
+  </div>
+  <div class="flores" id="floresDer"></div>
+</div>
+
+<div class="velas" id="velas"></div>
+
+<div class="qr" id="qr">
+  <img src="/qr.svg" alt="Código QR para subir fotos">
+  <p>Escanea y coloca<br>tu ofrenda 🌼</p>
+</div>
+
+<canvas id="petalos"></canvas>
+
+<div class="destacado" id="destacado"><div class="contenido" id="destacadoContenido"></div></div>
+<div class="offline" id="offline" hidden>Reconectando…</div>
+
+<script>
+const PER_PAGE = 15;          // fotos por pantalla antes de rotar
+const PAGE_SECONDS = 14;      // segundos por página
+const SPOTLIGHT_SECONDS = 9;  // segundos que se destaca una foto nueva
+
+const $ = (id) => document.getElementById(id);
+let ofrendas = [];
+let page = 0;
+let spotlightQueue = [];
+let spotlightBusy = false;
+
+// ---------- Decoración ----------
+const COLORES = ['#f28c1b', '#6a2c91', '#d6336c', '#2f8f4e', '#f2c12e', '#1f8fb8'];
+function papelPicado() {
+  const holes = `
+    <circle cx="50" cy="38" r="17"/>
+    <rect x="38" y="48" width="24" height="12" rx="3"/>
+    <circle cx="20" cy="18" r="4"/><circle cx="80" cy="18" r="4"/><circle cx="20" cy="70" r="4"/><circle cx="80" cy="70" r="4"/>
+    <path d="M10 88 L18 80 L26 88 L34 80 L42 88 L50 80 L58 88 L66 80 L74 88 L82 80 L90 88 L90 92 L10 92Z"/>
+    <path d="M15 40 q5 -8 10 0 q-5 8 -10 0Z"/><path d="M75 40 q5 -8 10 0 q-5 8 -10 0Z"/>`;
+  const eyes = `<circle cx="43" cy="37" r="4.5" fill="#000"/><circle cx="57" cy="37" r="4.5" fill="#000"/>
+    <path d="M47 46 l3 -4 l3 4z" fill="#000"/><path d="M42 53 h16 M46 50 v6 M50 50 v6 M54 50 v6" stroke="#000" stroke-width="1.6"/>`;
+  const n = 9;
+  let html = '';
+  for (let i = 0; i < n; i++) {
+    const c = COLORES[i % COLORES.length];
+    html += `<svg viewBox="0 0 100 110" preserveAspectRatio="none">
+      <defs><mask id="m${i}"><rect width="100" height="110" fill="#fff"/><g fill="#000">${holes}</g>
+        <g>${eyes.replaceAll('#000', '#fff')}</g>
+        <path d="M0 100 L10 110 L20 100 L30 110 L40 100 L50 110 L60 100 L70 110 L80 100 L90 110 L100 100 L100 110 L0 110Z" fill="#000"/></mask></defs>
+      <rect width="100" height="110" fill="${c}" mask="url(#m${i})"/></svg>`;
+  }
+  $('picado').innerHTML = html;
+}
+
+function flores(el, side) {
+  const items = [
+    [10, 62, 13], [38, 70, 11], [5, 78, 15], [45, 84, 14], [20, 90, 12], [62, 76, 9],
+    [15, 40, 9], [42, 48, 8], [28, 55, 10], [55, 60, 7], [8, 25, 7], [35, 30, 6],
+  ];
+  el.innerHTML = items.map(([x, y, s]) => {
+    const left = side === 'izq' ? x : 100 - x - s * 0.9;
+    return `<div class="flor" style="left:${left}%;top:${y - 15}%;width:${s}vh;height:${s}vh;transform:rotate(${(x * 37) % 360}deg)"></div>`;
+  }).join('');
+}
+
+function velas() {
+  const alturas = [5, 8, 4.5, 7, 6, 9, 5, 7];
+  $('velas').innerHTML = alturas.map((h, i) =>
+    `<div class="vela" style="height:${h}vh;--d:-${(i * .37).toFixed(2)}s"></div>`).join('');
+}
+
+// ---------- Pétalos ----------
+function petalos() {
+  const cv = $('petalos'), ctx = cv.getContext('2d');
+  let W, H;
+  const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+  resize(); addEventListener('resize', resize);
+  const ps = Array.from({ length: 38 }, () => nuevo(true));
+  function nuevo(inicio) {
+    return { x: Math.random() * W, y: inicio ? Math.random() * H : -20, r: 4 + Math.random() * 6,
+      vy: .3 + Math.random() * .7, vx: -.3 + Math.random() * .6, a: Math.random() * 6.28, va: -.02 + Math.random() * .04,
+      c: ['#f28c1b', '#f7a227', '#e07a10', '#ffb53d'][Math.floor(Math.random() * 4)] };
+  }
+  (function tick(t) {
+    ctx.clearRect(0, 0, W, H);
+    ps.forEach((p, i) => {
+      p.y += p.vy; p.x += p.vx + Math.sin(t / 1500 + i) * .3; p.a += p.va;
+      if (p.y > H + 20) ps[i] = nuevo(false);
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+      ctx.fillStyle = p.c; ctx.globalAlpha = .75;
+      ctx.beginPath(); ctx.ellipse(0, 0, p.r, p.r * .55, 0, 0, 6.283); ctx.fill(); ctx.restore();
+    });
+    requestAnimationFrame(tick);
+  })(0);
+}
+
+// ---------- Fotos ----------
+const esc = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function marcoHTML(o) {
+  return `<div class="marco" data-id="${esc(o.id)}">
+    <div class="foto"><img src="/fotos/${esc(o.file)}" alt="${esc(o.nombre)}"></div>
+    <div class="placa">
+      <div class="nombre">${esc(o.nombre) || '&nbsp;'}</div>
+      ${o.mensaje ? `<div class="mensaje">${esc(o.mensaje)}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function pages() { return Math.max(1, Math.ceil(ofrendas.length / PER_PAGE)); }
+
+function render() {
+  const grid = $('grid');
+  document.body.classList.toggle('empty', ofrendas.length === 0);
+  if (ofrendas.length === 0) {
+    grid.style.cssText = '';
+    grid.innerHTML = `<div class="vacio"><img src="/qr.svg" alt="">
+      <p>Escanea el código con tu celular y coloca la foto de tu ser querido en el altar</p></div>`;
+    $('pagina').textContent = '';
+    return;
+  }
+  if (page >= pages()) page = 0;
+  // Las más recientes primero
+  const ordenadas = ofrendas.slice().reverse();
+  const visibles = ordenadas.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
+  const n = visibles.length;
+  const cols = Math.min(n, Math.ceil(Math.sqrt(n * 1.7)));
+  const rows = Math.ceil(n / cols);
+  grid.style.cssText = `--cols:${cols};--rows:${rows}`;
+  grid.innerHTML = visibles.map(marcoHTML).join('');
+  $('pagina').textContent = pages() > 1 ? Array.from({ length: pages() }, (_, i) => (i === page ? '●' : '○')).join(' ') : '';
+}
+
+function rotar() {
+  if (pages() <= 1 || spotlightBusy) return;
+  $('grid').classList.add('fade');
+  setTimeout(() => { page = (page + 1) % pages(); render(); $('grid').classList.remove('fade'); }, 800);
+}
+setInterval(rotar, PAGE_SECONDS * 1000);
+
+// ---------- Destacado ----------
+function destacar(o) {
+  spotlightQueue.push(o);
+  if (!spotlightBusy) siguiente();
+}
+function siguiente() {
+  const o = spotlightQueue.shift();
+  if (!o) { spotlightBusy = false; return; }
+  spotlightBusy = true;
+  const img = new Image();
+  img.onload = img.onerror = () => {
+    $('destacadoContenido').innerHTML = `<div class="aviso">✦ Una nueva ofrenda llega al altar ✦</div>${marcoHTML(o)}`;
+    $('destacado').classList.add('show');
+    setTimeout(() => {
+      $('destacado').classList.remove('show');
+      page = 0; render();
+      setTimeout(siguiente, 1200);
+    }, SPOTLIGHT_SECONDS * 1000);
+  };
+  img.src = '/fotos/' + o.file;
+}
+
+// ---------- Datos en vivo ----------
+async function cargar() {
+  try {
+    ofrendas = await (await fetch('/api/ofrendas')).json();
+    render();
+  } catch (e) { console.error(e); }
+}
+
+function conectar() {
+  const es = new EventSource('/api/eventos');
+  es.onopen = () => { $('offline').hidden = true; cargar(); };
+  es.onerror = () => { $('offline').hidden = false; };
+  es.addEventListener('nueva', (e) => {
+    const o = JSON.parse(e.data);
+    if (ofrendas.some((x) => x.id === o.id)) return;
+    ofrendas.push(o);
+    if (!spotlightBusy) { page = 0; render(); }
+    destacar(o);
+  });
+  es.addEventListener('borrada', (e) => {
+    const { id } = JSON.parse(e.data);
+    ofrendas = ofrendas.filter((x) => x.id !== id);
+    spotlightQueue = spotlightQueue.filter((x) => x.id !== id);
+    render();
+  });
+}
+
+papelPicado();
+flores($('floresIzq'), 'izq');
+flores($('floresDer'), 'der');
+velas();
+petalos();
+render();
+conectar();
+</script>
+</body>
+</html>

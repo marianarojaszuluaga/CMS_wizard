@@ -1,0 +1,8 @@
+{
+  "name": "altar-dia-de-muertos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Altar digital: los invitados suben fotos desde su celular con un QR y aparecen en la TV.",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

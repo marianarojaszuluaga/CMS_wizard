@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moderar altar</title>
+<style>
+  :root { --bg: #1a0f0a; --card: #2a1810; --ink: #fbeedd; --muted: #c9ab8f; --accent: #f28c1b; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, sans-serif; padding: 16px; }
+  h1 { font-size: 1.4rem; margin: 0 0 12px; }
+  .pin { display: flex; gap: 8px; margin-bottom: 16px; }
+  input { flex: 1; padding: 12px; font-size: 16px; border-radius: 10px; border: 0; background: var(--card); color: var(--ink); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .item { background: var(--card); border-radius: 12px; overflow: hidden; }
+  .item img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; }
+  .item div { padding: 8px; font-size: .85rem; }
+  .item small { color: var(--muted); display: block; }
+  button { width: 100%; padding: 10px; border: 0; background: #8b1e1e; color: #fff; font-weight: 600; cursor: pointer; }
+  .msg { color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>Moderar altar</h1>
+<div class="pin"><input id="pin" type="password" inputmode="numeric" placeholder="PIN (aparece en la terminal del servidor)"></div>
+<p class="msg" id="msg"></p>
+<div class="grid" id="grid"></div>
+<script>
+const $ = (id) => document.getElementById(id);
+try { $('pin').value = sessionStorage.getItem('pin') || ''; } catch {}
+$('pin').addEventListener('input', () => { try { sessionStorage.setItem('pin', $('pin').value); } catch {} });
+
+async function cargar() {
+  const list = (await (await fetch('/api/ofrendas')).json()).reverse();
+  $('msg').textContent = list.length + ' fotos en el altar';
+  $('grid').innerHTML = '';
+  for (const o of list) {
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `<img src="/fotos/${o.file}" alt=""><div><b></b><small></small></div><button>Quitar</button>`;
+    el.querySelector('b').textContent = o.nombre || '(sin nombre)';
+    el.querySelector('small').textContent = new Date(o.creado).toLocaleTimeString();
+    el.querySelector('button').onclick = async () => {
+      if (!confirm('¿Quitar esta foto del altar?')) return;
+      const res = await fetch(`/api/ofrendas/${o.id}?pin=${encodeURIComponent($('pin').value)}`, { method: 'DELETE' });
+      if (res.ok) el.remove(); else alert((await res.json()).error);
+    };
+    $('grid').appendChild(el);
+  }
+}
+cargar();
+new EventSource('/api/eventos').addEventListener('nueva', cargar);
+</script>
+</body>
+</html>
